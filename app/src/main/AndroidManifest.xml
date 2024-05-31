@@ -16,7 +16,7 @@
         android:theme="@style/Theme.KotlinAssignment"
         tools:targetApi="31">
         <activity
-            android:name=".ui.main.view.activities.MainActivity"
+            android:name="com.example.kotlinassignment.ui.main.view.activities.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.KotlinAssignment">
