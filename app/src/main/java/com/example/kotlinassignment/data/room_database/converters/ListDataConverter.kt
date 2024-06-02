@@ -1,6 +1,7 @@
 package com.example.contentplay.data.room_database.converters
 
 import androidx.room.TypeConverter
+import com.example.kotlinassignment.data.model.ListDataModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -20,4 +21,6 @@ class ListDataConverter {
         }.type
         return gson.fromJson<List<String>>(dataString,type)
     }
+
+
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content_main_fragment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#424242"
+        tools:context=".ui.main.view.fragments.ContentPlayMainFragment">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_fragment_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="List Data"
+            android:padding="10dp"
+            android:textSize="26sp"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_content_listing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            tools:listitem="@layout/list_data_item"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            android:orientation="vertical"
+            app:spanCount="3"
+            app:layout_constraintTop_toBottomOf="@id/tv_fragment_header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -12,6 +12,9 @@ import com.example.kotlinassignment.data.repository.ListDataRepository
 import com.example.kotlinassignment.data.room_database.database.ListDataDatabase
 import com.example.kotlinassignment.ui.base.ListDataViewModelFactory
 import com.example.kotlinassignment.ui.viewmodel.ListDataViewModel
+import com.example.kotlinassignment.utils.AppConstants.TAG
+import com.example.kotlinassignment.utils.CommonFunction.parseJsonToModel
+import com.example.kotlinassignment.utils.CommonFunction.readJsonFromAssets
 import com.example.kotlinassignment.utils.LiveNetworkChecker
 
 class ListDataViewFragment : Fragment() {
@@ -34,6 +37,11 @@ class ListDataViewFragment : Fragment() {
             listDataViewModel = ViewModelProvider(this, factory)[ListDataViewModel::class.java]
         }
         return super.onCreateView(inflater, container, savedInstanceState)
+
+        val jsonString = readJsonFromAssets(requireContext(), "testdata.json")
+        Log.e(TAG,"Asset JSON == "+jsonString)
+        val bookList = parseJsonToModel(jsonString)
+        Log.e(TAG,"list From JSON == "+jsonString)
 
     }
 
