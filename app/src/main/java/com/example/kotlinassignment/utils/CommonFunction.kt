@@ -1,6 +1,12 @@
 package com.example.kotlinassignment.utils
 
 import android.content.Context
+import android.graphics.drawable.Drawable
+import androidx.appcompat.widget.AppCompatImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
+import com.example.kotlinassignment.R
 import com.example.kotlinassignment.data.model.ListDataModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -12,6 +18,16 @@ object CommonFunction{
     fun parseJsonToModel(jsonString: String): List<ListDataModel> {
         val gson = Gson()
         return gson.fromJson(jsonString, object : TypeToken<List<ListDataModel>>() {}.type)
+    }
+
+    fun setImageURL(context: Context,image:String,imageView: AppCompatImageView) {
+
+
+        Glide.with(context)
+            .load(image)
+            .error(R.drawable.ic_launcher_background)
+            .placeholder(R.drawable.ic_launcher_background)
+            .into(imageView)
     }
 }
 

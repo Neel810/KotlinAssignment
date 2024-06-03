@@ -12,7 +12,7 @@ class ListDataViewModelFactory(
     private val repository: ListDataRepository)
     : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ListDataModel::class.java)) {
+        if (modelClass.isAssignableFrom(ListDataViewModel::class.java)) {
             return ListDataViewModel(repository) as T
         }
         throw IllegalArgumentException("UnKnown ViewModel Class")

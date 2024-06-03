@@ -41,6 +41,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -98,6 +99,10 @@ dependencies {
     implementation ("com.google.dagger:dagger-android-support:2.14")
     kapt ("com.google.dagger:dagger-compiler:2.14")
     kapt ("com.google.dagger:dagger-android-processor:2.14")
+
+    //Glide
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+
 
 
 }

@@ -38,15 +38,17 @@ class ListDataViewFragment : Fragment() {
         }
         return super.onCreateView(inflater, container, savedInstanceState)
 
-        val jsonString = readJsonFromAssets(requireContext(), "testdata.json")
-        Log.e(TAG,"Asset JSON == "+jsonString)
-        val bookList = parseJsonToModel(jsonString)
-        Log.e(TAG,"list From JSON == "+jsonString)
+
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val jsonString = readJsonFromAssets(requireContext(), "testdata.json")
+        Log.e(TAG,"Asset JSON == "+jsonString)
+        val bookList = parseJsonToModel(jsonString)
+        Log.e(TAG,"list From JSON == "+jsonString)
 
         LiveNetworkChecker.init(requireActivity().application)
         if(!LiveNetworkChecker.hasObservers()) {
