@@ -1,34 +1,35 @@
 {
   "page": {
     "title": "Romantic Comedy",
-    "total-content-items": "54",
-    "page-num": "1",
-    "page-size": "20",
-    "content-items": {
+    "total_items": "54",
+    "page_num": "1",
+    "page_size": "20",
+    "content_items": {
       "content": [
         {
+
           "name": "The Birds",
-          "poster-image": "poster1.jpg"
+          "poster_image": "poster1.jpg"
         },
         {
           "name": "Rear window",
-          "poster-image": "poster2.jpg"
+          "poster_image": "poster2.jpg"
         },
         {
           "name": "Family pot",
-          "poster-image": "poster3.jpg"
+          "poster_image": "poster3.jpg"
         },
         {
           "name": "Rear window",
-          "poster-image": "poster1.jpg"
+          "poster_image": "poster1.jpg"
         },
         {
           "name": "The Birds",
-          "poster-image": "poster2.jpg"
+          "poster_image": "poster2.jpg"
         },
         {
           "name": "Family pot",
-          "poster-image": "poster1.jpg"
+          "poster_image": "poster1.jpg"
         }
       ]
     }

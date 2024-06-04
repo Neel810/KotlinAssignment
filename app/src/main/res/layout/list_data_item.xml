@@ -4,8 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="170dp"
-        android:layout_height="wrap_content">
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@color/black">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_list_image"

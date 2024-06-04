@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         LiveNetworkChecker.init(application)
         val listDataViewFragment = ListDataViewFragment()
         if(savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(android.R.id.content, listDataViewFragment).commitNow()
+            supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainer, listDataViewFragment).commitNow()
         }
     }
 

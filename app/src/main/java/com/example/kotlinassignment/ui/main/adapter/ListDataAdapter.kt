@@ -8,18 +8,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.kotlinassignment.R
+import com.example.kotlinassignment.data.model.Content
 import com.example.kotlinassignment.data.model.ListDataModel
 import com.example.kotlinassignment.databinding.ListDataItemBinding
 import com.example.kotlinassignment.utils.CommonFunction.setImageURL
 
-class ListDataAdapter (
-    private var contentArrayList: ArrayList<ListDataModel>
+class ListDataAdapter(
+    private var context: Context?,
+    private var contentArrayList: List<Content>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    private lateinit var context: Context
+
     private lateinit var binding: ListDataItemBinding
     private var query: String = ""
 
@@ -44,10 +46,11 @@ class ListDataAdapter (
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val content = contentArrayList[position]
 
+        binding.tvTitle.text=content.name
         //Glide library to load images into Imageviews
         Glide
             .with(binding.ivListImage)
-            .load((setImageURL(context,"",binding.ivListImage)))
+            .load((context?.let { setImageURL(it,"",binding.ivListImage) }))
             .placeholder(R.drawable.ic_launcher_foreground) //Placeholder image if poster-image value is empty
             .into(binding.ivListImage)
 

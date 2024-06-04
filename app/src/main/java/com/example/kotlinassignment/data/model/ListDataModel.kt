@@ -15,5 +15,12 @@ data class ListDataModel(
     val videoURL: String,
     @TypeConverters(ListDataConverter::class) val genres: List<String>,
     @TypeConverters(ListDataConverter::class) val movieCast: List<String>
+
+
 )
+
+
+
+
+
 

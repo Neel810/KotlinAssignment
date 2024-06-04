@@ -13,7 +13,7 @@ class ListDataRepository (database: ListDataDatabase) {
 
     private val listDataDAO = database.listDataDao()
     @Inject
-    lateinit var retrofitInstance: RetrofitInstance
+   lateinit var retrofitInstance: RetrofitInstance
 
     suspend fun addMovieDataToDB(movies: List<ListDataModel>) {
         listDataDAO.addListDataToDB(movies)
