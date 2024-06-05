@@ -29,7 +29,7 @@ class ListDataAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         context = parent.context
 
-         binding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             LayoutInflater.from(context),
             R.layout.list_data_item,
             parent,
@@ -40,18 +40,19 @@ class ListDataAdapter(
         return MyViewHolder(binding.root)
     }
 
-    fun updatedListFromDatabase(filterList: ArrayList<ListDataModel>) {
-
+    fun updatedSearchList(filterList: ArrayList<Content>) {
+        contentArrayList = filterList
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val content = contentArrayList[position]
 
-        binding.tvTitle.text=content.name
+        binding.tvTitle.text = content.name
         //Glide library to load images into Imageviews
         Glide
             .with(binding.ivListImage)
-            .load((context?.let { setListRowImage(it,content.poster_image) }))
+            .load((context?.let { setListRowImage(it, content.poster_image) }))
             .placeholder(R.drawable.placeholder_for_missing_posters)
             .into(binding.ivListImage)
 
