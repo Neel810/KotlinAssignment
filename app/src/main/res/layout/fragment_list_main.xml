@@ -48,12 +48,13 @@
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/et_search"
-            android:layout_width="match_parent"
+            android:layout_width="390dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="44dp"
             android:layout_marginTop="4dp"
             android:padding="10dp"
             android:hint="@string/search"
+            android:visibility="gone"
             android:textAlignment="textStart"
             android:textColor="@color/white"
             android:textSize="20sp"

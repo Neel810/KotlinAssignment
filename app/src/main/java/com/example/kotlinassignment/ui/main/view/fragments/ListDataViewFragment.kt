@@ -7,7 +7,10 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -28,7 +31,7 @@ import com.example.kotlinassignment.utils.CommonFunction.readJsonFromAssets
 import com.example.kotlinassignment.utils.LiveNetworkChecker
 
 
-class ListDataViewFragment : Fragment() {
+class ListDataViewFragment : Fragment(){
 
 
     private lateinit var listData: ListDataModelAPI
@@ -76,14 +79,62 @@ class ListDataViewFragment : Fragment() {
     }
 
     private fun setData() {
-        contentList = listData.page.content_items.content
-        listDataAdapter = ListDataAdapter(requireActivity(), contentList)
-        binding.rvContentListing.adapter = listDataAdapter
+       hideShowSearchView()
+        //
+        setListAdapter()
         //
         setSearchFilterList()
+        //
+
 
     }
 
+    private fun hideShowSearchView() {
+
+        binding.ivSearch.setOnClickListener({ view ->
+            // Do some work here
+            Log.e(TAG,"Clicked")
+
+            if (binding.ivSearch.drawable.constantState == context?.let {
+                    ContextCompat.getDrawable(
+                        it, R.drawable.search)?.constantState
+                }){
+                //Show Search View
+                binding.tvFragmentHeader.visibility = GONE
+                binding.etSearch.visibility = VISIBLE
+                //
+                binding.ivSearch.setImageDrawable(
+                    context?.let {
+                        ContextCompat.getDrawable(
+                            it.applicationContext,
+                            R.drawable.search_cancel
+                        )
+                    })
+            }else{
+                binding.etSearch.setText("")
+                binding.tvFragmentHeader.visibility = VISIBLE
+                binding.etSearch.visibility = GONE
+                //
+                binding.ivSearch.setImageDrawable(
+                    context?.let {
+                        ContextCompat.getDrawable(
+                            it.applicationContext,
+                            R.drawable.search
+                        )
+                    })
+            }
+           
+        })
+    }
+
+    /*List set Data to adapter*/
+    private fun setListAdapter() {
+        contentList = listData.page.content_items.content
+        listDataAdapter = ListDataAdapter(requireActivity(), contentList)
+        binding.rvContentListing.adapter = listDataAdapter
+    }
+
+    /*Search from list data*/
     private fun setSearchFilterList() {
 
         binding.etSearch.addTextChangedListener(object : TextWatcher {
