@@ -19,7 +19,7 @@ data class Page(
     val page_num: String,
     val page_size: String,
     val title: String,
-    val total_items: String
+    val total_content_items: String
 )
 data class ContentItems(
     val content: List<Content>

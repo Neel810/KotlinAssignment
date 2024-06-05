@@ -6,7 +6,7 @@
         android:id="@+id/content_main_fragment_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/black"
         tools:context=".ui.main.view.fragments.ContentPlayMainFragment">
 
         <!--Back Icon-->
@@ -17,12 +17,12 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginStart="4dp"
             android:padding="5dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/back_icon"
+            app:srcCompat="@drawable/back"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteY="16dp" />
 
@@ -36,22 +36,37 @@
             android:text="@string/romantic_comedy"
             android:textAlignment="textStart"
             android:textColor="@color/white"
-            android:textSize="26sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/iv_back"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_search"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="5dp"
+            app:srcCompat="@drawable/search"
+            tools:layout_editor_absoluteY="16dp"
+            tools:ignore="MissingConstraints" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_content_listing"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             tools:listitem="@layout/list_data_item"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/tv_fragment_header"
+            app:spanCount="3"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_fragment_header" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

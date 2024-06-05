@@ -12,6 +12,7 @@ import com.example.kotlinassignment.data.model.Content
 import com.example.kotlinassignment.data.model.ListDataModel
 import com.example.kotlinassignment.databinding.ListDataItemBinding
 import com.example.kotlinassignment.utils.CommonFunction.setImageURL
+import com.example.kotlinassignment.utils.CommonFunction.setListRowImage
 
 class ListDataAdapter(
     private var context: Context?,
@@ -50,8 +51,8 @@ class ListDataAdapter(
         //Glide library to load images into Imageviews
         Glide
             .with(binding.ivListImage)
-            .load((context?.let { setImageURL(it,"",binding.ivListImage) }))
-            .placeholder(R.drawable.ic_launcher_foreground) //Placeholder image if poster-image value is empty
+            .load((context?.let { setListRowImage(it,content.poster_image) }))
+            .placeholder(R.drawable.placeholder_for_missing_posters)
             .into(binding.ivListImage)
 
     }
