@@ -14,7 +14,11 @@
         <!--title text-->
 
         <!--Data List RecyclerView-->
-
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/cl_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:ignore="MissingConstraints">
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_back"
             android:layout_width="30dp"
@@ -38,8 +42,26 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
+            tools:visibility="gone"
             app:layout_constraintStart_toStartOf="@+id/iv_back"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="44dp"
+            android:layout_marginTop="4dp"
+            android:padding="10dp"
+            android:hint="@string/search"
+            android:textAlignment="textStart"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColorHint="@color/white"
+            app:layout_constraintStart_toStartOf="@+id/iv_back"
+            app:layout_constraintStart_toEndOf="@+id/iv_search"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_search"
@@ -51,6 +73,8 @@
             app:srcCompat="@drawable/search"
             tools:layout_editor_absoluteY="16dp"
             tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_content_listing"
@@ -66,7 +90,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_fragment_header" />
+            app:layout_constraintTop_toBottomOf="@id/cl_toolbar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
