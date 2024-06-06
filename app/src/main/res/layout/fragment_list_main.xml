@@ -9,26 +9,25 @@
         android:background="@color/black"
         tools:context=".ui.main.view.fragments.ContentPlayMainFragment">
 
-        <!--Back Icon-->
 
-        <!--title text-->
 
         <!--Data List RecyclerView-->
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/cl_toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:ignore="MissingConstraints">
+    tools:ignore="MissingConstraints"
+    >
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_back"
             android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="4dp"
+            android:layout_height="34dp"
             android:padding="5dp"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:srcCompat="@drawable/back"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteY="16dp" />
+            tools:ignore="MissingConstraints" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_fragment_header"
@@ -44,13 +43,13 @@
             android:textStyle="bold"
             tools:visibility="gone"
             app:layout_constraintStart_toStartOf="@+id/iv_back"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/et_search"
-            android:layout_width="390dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="44dp"
             android:layout_marginTop="4dp"
             android:padding="10dp"
             android:hint="@string/search"
@@ -60,19 +59,24 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColorHint="@color/white"
-            app:layout_constraintStart_toStartOf="@+id/iv_back"
-            app:layout_constraintStart_toEndOf="@+id/iv_search"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintStart_toEndOf="@+id/iv_back"
+            app:layout_constraintEnd_toStartOf="@+id/iv_search"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_search"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
             android:padding="5dp"
+            android:visibility="visible"
             app:srcCompat="@drawable/search"
-            tools:layout_editor_absoluteY="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,15 +6,21 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.widget.AppCompatEditText
+import android.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuItemCompat
+import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import com.example.kotlinassignment.R
 import com.example.kotlinassignment.data.model.Content
@@ -28,10 +34,10 @@ import com.example.kotlinassignment.ui.viewmodel.ListDataViewModel
 import com.example.kotlinassignment.utils.AppConstants.TAG
 import com.example.kotlinassignment.utils.CommonFunction.parseJsonToModel
 import com.example.kotlinassignment.utils.CommonFunction.readJsonFromAssets
-import com.example.kotlinassignment.utils.LiveNetworkChecker
 
 
-class ListDataViewFragment : Fragment(){
+class ListDataViewFragment : Fragment() {
+
 
 
     private lateinit var listData: ListDataModelAPI
@@ -39,6 +45,7 @@ class ListDataViewFragment : Fragment(){
     private lateinit var binding: FragmentListMainBinding
     private lateinit var contentList: ArrayList<Content>
     private lateinit var listDataAdapter: ListDataAdapter
+    private var isClicked: Boolean=false
     private val sColumnWidth = 150 // assume cell width of 120dp
 
     override fun onAttach(context: Context) {
@@ -60,15 +67,19 @@ class ListDataViewFragment : Fragment(){
             inflater, R.layout.fragment_list_main, container, false
         )
 
-        val jsonString = readJsonFromAssets(requireContext(), "page_1.json")
-        Log.e(TAG, "Asset JSON == " + jsonString)
-        listData = parseJsonToModel(jsonString)
-        Log.e(TAG, "list From JSON == " + listData.page.content_items.content.size)
 
-
+        setListData("page_1.json")
         return binding.getRoot()
 
 
+    }
+
+    /*Set List Data from asset json*/
+    private fun setListData(strJson: String) {
+        val jsonString = readJsonFromAssets(requireContext(), strJson)
+        Log.e(TAG, "Asset JSON == " + jsonString)
+        listData = parseJsonToModel(jsonString)
+        Log.e(TAG, "list From JSON == " + listData.page.content_items.content.size)
     }
 
 
@@ -84,21 +95,18 @@ class ListDataViewFragment : Fragment(){
         setListAdapter()
         //
         setSearchFilterList()
-        //
-
 
     }
 
     private fun hideShowSearchView() {
 
-        binding.ivSearch.setOnClickListener({ view ->
+        binding.ivSearch.setOnClickListener { view ->
             // Do some work here
-            Log.e(TAG,"Clicked")
+            Log.e(TAG, "Clicked")
 
-            if (binding.ivSearch.drawable.constantState == context?.let {
-                    ContextCompat.getDrawable(
-                        it, R.drawable.search)?.constantState
-                }){
+
+
+            if (!isClicked) {
                 //Show Search View
                 binding.tvFragmentHeader.visibility = GONE
                 binding.etSearch.visibility = VISIBLE
@@ -110,7 +118,9 @@ class ListDataViewFragment : Fragment(){
                             R.drawable.search_cancel
                         )
                     })
-            }else{
+                binding.ivBack.visibility = GONE
+                isClicked = true
+            } else {
                 binding.etSearch.setText("")
                 binding.tvFragmentHeader.visibility = VISIBLE
                 binding.etSearch.visibility = GONE
@@ -122,10 +132,13 @@ class ListDataViewFragment : Fragment(){
                             R.drawable.search
                         )
                     })
+
+                binding.ivBack.visibility = VISIBLE
             }
-           
-        })
+
+        }
     }
+
 
     /*List set Data to adapter*/
     private fun setListAdapter() {
@@ -189,5 +202,6 @@ class ListDataViewFragment : Fragment(){
             listDataAdapter.updatedSearchList(filterdNames)
         }
     }
+
 
 }
