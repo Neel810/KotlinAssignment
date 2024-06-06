@@ -134,6 +134,7 @@ class ListDataViewFragment : Fragment() {
                     })
 
                 binding.ivBack.visibility = VISIBLE
+                isClicked=false
             }
 
         }
