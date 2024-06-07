@@ -2,16 +2,8 @@ package com.example.kotlinassignment.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class ListDataModelAPI(
-//    @SerializedName("") val movieId: Int,
-//    @SerializedName("") val movieName: String,
-//    @SerializedName("") val movieDescription: String,
-//    @SerializedName("")  val movieThumbnail: String,
-//    @SerializedName("") val videoURL: String,
-//    @SerializedName("") val genres: List<String>,
-//    @SerializedName("") val movieCast: List<String>
-//)
 
+data class ListDataModelAPI(
     val page: Page
 )
 data class Page(
@@ -25,6 +17,7 @@ data class ContentItems(
     val content: ArrayList<Content>
 )
 data class Content(
+    val id:Int,
     val name: String,
     val poster_image: String
 )

@@ -1,6 +1,7 @@
 package com.example.kotlinassignment.ui.main.view.fragments
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,41 +11,54 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlinassignment.R
 import com.example.kotlinassignment.data.model.Content
+import com.example.kotlinassignment.data.model.ListDataModel
 import com.example.kotlinassignment.data.model.ListDataModelAPI
 import com.example.kotlinassignment.data.repository.ListDataRepository
 import com.example.kotlinassignment.data.room_database.database.ListDataDatabase
 import com.example.kotlinassignment.databinding.FragmentListMainBinding
 import com.example.kotlinassignment.ui.base.ListDataViewModelFactory
 import com.example.kotlinassignment.ui.main.adapter.ListDataAdapter
+import com.example.kotlinassignment.ui.main.view.activities.MainActivity
 import com.example.kotlinassignment.ui.viewmodel.ListDataViewModel
 import com.example.kotlinassignment.utils.AppConstants.TAG
+import com.example.kotlinassignment.utils.CommonFunction.convertDPToPixels
 import com.example.kotlinassignment.utils.CommonFunction.notNullEmpty
 import com.example.kotlinassignment.utils.CommonFunction.parseJsonToModel
 import com.example.kotlinassignment.utils.CommonFunction.readJsonFromAssets
 import com.example.kotlinassignment.utils.RecyclerViewScrollListener
+import kotlin.math.floor
 
 
 class ListDataViewFragment : Fragment() {
 
 
+    private  var pixel: Int=0
     private lateinit var listConentData: ArrayList<Content>
+    private lateinit var listConentSaveDB: ArrayList<ListDataModel>
     private lateinit var listData: ListDataModelAPI
+
     private lateinit var listDataViewModel: ListDataViewModel
     private lateinit var binding: FragmentListMainBinding
+
+    //
     private lateinit var listDataAdapter: ListDataAdapter
     private var isClicked: Boolean = false
+
+    //
     private lateinit var scrollListener: RecyclerViewScrollListener
     private var mTotalCount = 0
     private var mPage = 1
-    private var isProgress = false
     private var isPaginate = false
+    private val sColumnWidth = 90
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -58,17 +72,18 @@ class ListDataViewFragment : Fragment() {
 
         context?.let { context ->
             val repository = ListDataRepository(ListDataDatabase.getDatabase(context))
-            val factory = ListDataViewModelFactory(repository)
+            val factory = ListDataViewModelFactory(context, repository)
             listDataViewModel = ViewModelProvider(this, factory)[ListDataViewModel::class.java]
         }
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_list_main, container, false
         )
 
-
+        /*Setting List Data on page 1*/
         setListData("page_1.json")
-        return binding.getRoot()
 
+        setViewTreeObserveData()
+        return binding.getRoot()
 
     }
 
@@ -77,8 +92,6 @@ class ListDataViewFragment : Fragment() {
         val jsonString = readJsonFromAssets(requireContext(), strJson)
         Log.e(TAG, "Asset JSON == " + jsonString)
         listData = parseJsonToModel(jsonString)
-        //listConentData = listData.page.content_items.content
-
         //
         setScrollListnerView()
         setListAdapter(listData.page.content_items.content)
@@ -88,58 +101,53 @@ class ListDataViewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //
-        setData()
-    }
-
-    private fun setData() {
         hideShowSearchView()
-
         setSearchFilterList()
-
+        //
+        binding.ivBack.setOnClickListener{ view ->
+            (activity as MainActivity?)?.onBackPressed()
+        }
     }
+
 
     private fun hideShowSearchView() {
 
         binding.ivSearch.setOnClickListener { view ->
             // Do some work here
-            Log.e(TAG, "Clicked")
-
-
-
             if (!isClicked) {
-                //Show Search View
-                binding.tvFragmentHeader.visibility = GONE
-                binding.etSearch.visibility = VISIBLE
-                //
-                binding.ivSearch.setImageDrawable(
+
+                isClicked = true
+                setSearchBarHideShowView(GONE, VISIBLE,
                     context?.let {
                         ContextCompat.getDrawable(
                             it.applicationContext,
                             R.drawable.search_cancel
                         )
                     })
-                binding.ivBack.visibility = GONE
-                isClicked = true
             } else {
                 binding.etSearch.setText("")
-                binding.tvFragmentHeader.visibility = VISIBLE
-                binding.etSearch.visibility = GONE
-                //
-                binding.ivSearch.setImageDrawable(
-                    context?.let {
-                        ContextCompat.getDrawable(
-                            it.applicationContext,
-                            R.drawable.search
-                        )
-                    })
-
-                binding.ivBack.visibility = VISIBLE
                 isClicked = false
+                setSearchBarHideShowView(VISIBLE, GONE, context?.let {
+                    ContextCompat.getDrawable(
+                        it.applicationContext,
+                        R.drawable.search
+                    )
+                })
+
             }
 
         }
     }
 
+    /*Show Hide View for SearchView and HEader*/
+    private fun setSearchBarHideShowView(isTvFragmentHeader: Int, isEtSearch: Int, rightIcon: Drawable?) {
+        //Show Search View
+        binding.tvFragmentHeader.visibility = isTvFragmentHeader
+        binding.etSearch.visibility = isEtSearch
+        //
+        binding.ivSearch.setImageDrawable(rightIcon)
+        binding.ivBack.visibility = isTvFragmentHeader
+    }
 
     /*List set Data to adapter*/
     private fun setListAdapter(content: ArrayList<Content>) {
@@ -154,13 +162,32 @@ class ListDataViewFragment : Fragment() {
             if (::listDataAdapter.isInitialized) {
                 listConentData.addAll(content)
                 listDataAdapter.updateArrayList(listConentData, "")
-                //
+
+                //store updated data to DB
+                setDataToDB()
+                listDataViewModel.addListData(
+                    ContextCompat.getString(
+                        requireContext(),
+                        R.string.data_updated_successfully
+                    ), listConentSaveDB
+                )
                 Log.e(TAG, "Page No: ${mPage} updated list From JSON == " + listConentData.size)
             }
         } else {
             /*Set List Data for Page 1 */
             listConentData = ArrayList()
+            listConentSaveDB = ArrayList()
+            //
             listConentData = listData.page.content_items.content
+
+            //store new data to DB
+            setDataToDB()
+            listDataViewModel.addListData(
+                ContextCompat.getString(
+                    requireContext(),
+                    R.string.data_added_successfully
+                ), listConentSaveDB
+            )
             Log.e(TAG, "Page No: ${mPage} list From JSON == " + listConentData.size)
             //
             if (notNullEmpty(listConentData)) {
@@ -180,6 +207,18 @@ class ListDataViewFragment : Fragment() {
 
     }
 
+    private fun setDataToDB() {
+        for (i in 0 until listConentData.size) {
+
+            val listDataModel = ListDataModel(
+                listConentData.get(i).id,
+                listConentData.get(i).name,
+                listConentData.get(i).poster_image
+            )
+            listConentSaveDB.add(i, listDataModel)
+        }
+    }
+
     /*Search from list data*/
     private fun setSearchFilterList() {
 
@@ -190,25 +229,10 @@ class ListDataViewFragment : Fragment() {
 
             override fun afterTextChanged(editable: Editable) {
                 //after the change calling the method and passing the search input
-                if (editable.toString().length > 0) {
-                    binding.ivSearch.setImageDrawable(
-                        context?.let {
-                            ContextCompat.getDrawable(
-                                it.applicationContext,
-                                R.drawable.search_cancel
-                            )
-                        })
-                }
-                if (editable.toString().length == 0) {
-                    binding.ivSearch.setImageDrawable(
-                        context?.let {
-                            ContextCompat.getDrawable(
-                                it.applicationContext,
-                                R.drawable.search
-                            )
-                        })
-                }
-                filter(editable.toString())
+                //if (editable.toString().length > 2) {
+
+                    filter(editable.toString())
+                //}
             }
         })
     }
@@ -255,6 +279,20 @@ class ListDataViewFragment : Fragment() {
 
         }
         binding.rvContentListing.addOnScrollListener(scrollListener)
+    }
+    private fun setViewTreeObserveData() {
+        val viewTreeObserver: ViewTreeObserver = binding.rvContentListing.getViewTreeObserver()
+        viewTreeObserver.addOnGlobalLayoutListener { calculateSize() }
+    }
+
+
+    private fun calculateSize() {
+        val spanCount =
+            floor(binding.rvContentListing.getWidth() / convertDPToPixels(requireActivity(),sColumnWidth)).toInt()
+        if(spanCount<3)
+            ( binding.rvContentListing.getLayoutManager() as GridLayoutManager).spanCount = 3
+        else
+            ( binding.rvContentListing.getLayoutManager() as GridLayoutManager).spanCount = spanCount
     }
 
 }

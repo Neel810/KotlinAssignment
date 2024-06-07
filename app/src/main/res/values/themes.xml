@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.KotlinAssignment" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.KotlinAssignment" parent="android:Theme.Material.Light.NoActionBar" >
+
+            <item name="colorPrimary">@color/black</item>
+            <item name="colorPrimaryDark">@color/black</item>
+            <item name="android:statusBarColor">@color/black</item>
+
+    </style>
   <!-- Base application theme. -->
     <style name="Base.Theme.KotlinAssignment" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->

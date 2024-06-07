@@ -1,20 +1,29 @@
 package com.example.kotlinassignment.ui.viewmodel
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.kotlinassignment.R
+import com.example.kotlinassignment.data.model.Content
+import com.example.kotlinassignment.data.model.ListDataModel
 import com.example.kotlinassignment.data.model.ListDataModelAPI
 import com.example.kotlinassignment.data.repository.ListDataRepository
 import com.example.kotlinassignment.utils.AppConstants.TAG
+import com.example.kotlinassignment.utils.LiveNetworkChecker.postValue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class ListDataViewModel(private var repository: ListDataRepository): ViewModel() {
+class ListDataViewModel(val context: Context,private var repository: ListDataRepository): ViewModel() {
+
 
     private var listData = MutableLiveData<List<ListDataModelAPI>>()
+
     val moviesDataLiveData:LiveData<List<ListDataModelAPI>>
         get() = listData
     fun getContentFromServer() {
@@ -37,4 +46,12 @@ class ListDataViewModel(private var repository: ListDataRepository): ViewModel()
             }
         }
     }
+    //    function to add list to the repository
+    fun addListData(msg:String,listData: List<ListDataModel>){
+        viewModelScope.launch(Dispatchers.IO){
+            repository.addMovieDataToDB(listData)
+        }
+
+    }
+
 }

@@ -1,19 +1,18 @@
 package com.example.kotlinassignment.utils
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
+import android.util.DisplayMetrics
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
 import com.example.kotlinassignment.R
-import com.example.kotlinassignment.data.model.ListDataModel
 import com.example.kotlinassignment.data.model.ListDataModelAPI
 import com.example.kotlinassignment.utils.AppConstants.POSTER_1
 import com.example.kotlinassignment.utils.AppConstants.POSTER_2
@@ -26,6 +25,7 @@ import com.example.kotlinassignment.utils.AppConstants.POSTER_8
 import com.example.kotlinassignment.utils.AppConstants.POSTER_9
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+
 
 object CommonFunction{
 
@@ -99,6 +99,15 @@ object CommonFunction{
         textView.movementMethod = LinkMovementMethod.getInstance()
 
 
+    }
+
+    fun convertPixelsToDp(px: Int, context: Context): Int {
+        return px / (context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
+    }
+
+     fun convertDPToPixels(context: Activity,dp: Int): Float {
+        val logicalDensity = context.resources.displayMetrics.density
+        return dp * logicalDensity
     }
 }
 
