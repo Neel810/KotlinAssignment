@@ -6,22 +6,15 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuItemCompat
-import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlinassignment.R
 import com.example.kotlinassignment.data.model.Content
 import com.example.kotlinassignment.data.model.ListDataModelAPI
@@ -32,21 +25,26 @@ import com.example.kotlinassignment.ui.base.ListDataViewModelFactory
 import com.example.kotlinassignment.ui.main.adapter.ListDataAdapter
 import com.example.kotlinassignment.ui.viewmodel.ListDataViewModel
 import com.example.kotlinassignment.utils.AppConstants.TAG
+import com.example.kotlinassignment.utils.CommonFunction.notNullEmpty
 import com.example.kotlinassignment.utils.CommonFunction.parseJsonToModel
 import com.example.kotlinassignment.utils.CommonFunction.readJsonFromAssets
+import com.example.kotlinassignment.utils.RecyclerViewScrollListener
 
 
 class ListDataViewFragment : Fragment() {
 
 
-
+    private lateinit var listConentData: ArrayList<Content>
     private lateinit var listData: ListDataModelAPI
     private lateinit var listDataViewModel: ListDataViewModel
     private lateinit var binding: FragmentListMainBinding
-    private lateinit var contentList: ArrayList<Content>
     private lateinit var listDataAdapter: ListDataAdapter
-    private var isClicked: Boolean=false
-    private val sColumnWidth = 150 // assume cell width of 120dp
+    private var isClicked: Boolean = false
+    private lateinit var scrollListener: RecyclerViewScrollListener
+    private var mTotalCount = 0
+    private var mPage = 1
+    private var isProgress = false
+    private var isPaginate = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -79,7 +77,11 @@ class ListDataViewFragment : Fragment() {
         val jsonString = readJsonFromAssets(requireContext(), strJson)
         Log.e(TAG, "Asset JSON == " + jsonString)
         listData = parseJsonToModel(jsonString)
-        Log.e(TAG, "list From JSON == " + listData.page.content_items.content.size)
+        //listConentData = listData.page.content_items.content
+
+        //
+        setScrollListnerView()
+        setListAdapter(listData.page.content_items.content)
     }
 
 
@@ -90,10 +92,8 @@ class ListDataViewFragment : Fragment() {
     }
 
     private fun setData() {
-       hideShowSearchView()
-        //
-        setListAdapter()
-        //
+        hideShowSearchView()
+
         setSearchFilterList()
 
     }
@@ -134,7 +134,7 @@ class ListDataViewFragment : Fragment() {
                     })
 
                 binding.ivBack.visibility = VISIBLE
-                isClicked=false
+                isClicked = false
             }
 
         }
@@ -142,10 +142,42 @@ class ListDataViewFragment : Fragment() {
 
 
     /*List set Data to adapter*/
-    private fun setListAdapter() {
-        contentList = listData.page.content_items.content
-        listDataAdapter = ListDataAdapter(requireActivity(), contentList)
-        binding.rvContentListing.adapter = listDataAdapter
+    private fun setListAdapter(content: ArrayList<Content>) {
+
+        // addressList = resultList
+        mTotalCount = listData.page.total_content_items.toInt()
+        Log.e(TAG, "Page No: ${mPage} total count == " + mTotalCount)
+
+        /*Set Data*/
+
+        if (mPage > 1) {
+            if (::listDataAdapter.isInitialized) {
+                listConentData.addAll(content)
+                listDataAdapter.updateArrayList(listConentData, "")
+                //
+                Log.e(TAG, "Page No: ${mPage} updated list From JSON == " + listConentData.size)
+            }
+        } else {
+            /*Set List Data for Page 1 */
+            listConentData = ArrayList()
+            listConentData = listData.page.content_items.content
+            Log.e(TAG, "Page No: ${mPage} list From JSON == " + listConentData.size)
+            //
+            if (notNullEmpty(listConentData)) {
+                listDataAdapter = ListDataAdapter(requireActivity(), listConentData)
+                binding.rvContentListing.adapter = listDataAdapter
+            }
+
+        }
+        /*Enable Disable ScrollListner*/
+        if (listConentData.size == mTotalCount) {
+            isPaginate = false
+            scrollListener.disableScrollListener()
+        } else {
+            isPaginate = true
+            scrollListener.enableScrollListener()
+        }
+
     }
 
     /*Search from list data*/
@@ -188,8 +220,8 @@ class ListDataViewFragment : Fragment() {
         val filterdNames: ArrayList<Content> = ArrayList()
 
         //looping through existing elements
-        if (::contentList.isInitialized && contentList.size > 0) {
-            for (s in contentList) {
+        if (::listConentData.isInitialized && listConentData.size > 0) {
+            for (s in listConentData) {
                 //if the existing elements contains the search input
                 if (s.name.lowercase().contains(text.lowercase())
                     || s.name.uppercase().contains(text.uppercase())
@@ -200,9 +232,29 @@ class ListDataViewFragment : Fragment() {
             }
 
             //calling a method of the adapter class and passing the filtered list
-            listDataAdapter.updatedSearchList(filterdNames)
+            listDataAdapter.updateArrayList(filterdNames, text)
         }
     }
 
+    private fun setScrollListnerView() {
+        /*Pagination Scroll Listner*/
+        scrollListener = object : RecyclerViewScrollListener() {
+            override fun onEndOfScrollReached(recyclerView: RecyclerView?) {
+                if (isPaginate) {
+                    //  addressList.add(null)
+                    isPaginate = false
+                    mPage++
+                    if (mPage == 2) {
+                        setListData("page_2.json")
+                    } else if (mPage == 3) {
+                        setListData("page_3.json")
+                    }
+
+                }
+            }
+
+        }
+        binding.rvContentListing.addOnScrollListener(scrollListener)
+    }
 
 }

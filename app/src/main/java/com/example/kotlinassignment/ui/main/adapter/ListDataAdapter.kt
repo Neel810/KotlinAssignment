@@ -1,18 +1,24 @@
 package com.example.kotlinassignment.ui.main.adapter
 
 import android.content.Context
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.kotlinassignment.R
 import com.example.kotlinassignment.data.model.Content
-import com.example.kotlinassignment.data.model.ListDataModel
 import com.example.kotlinassignment.databinding.ListDataItemBinding
-import com.example.kotlinassignment.utils.CommonFunction.setImageURL
 import com.example.kotlinassignment.utils.CommonFunction.setListRowImage
+import com.example.kotlinassignment.utils.CommonFunction.setSpannableText
 
 class ListDataAdapter(
     private var context: Context?,
@@ -24,7 +30,7 @@ class ListDataAdapter(
 
 
     private lateinit var binding: ListDataItemBinding
-    private var query: String = ""
+    private var searchText: String = ""
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         context = parent.context
@@ -40,7 +46,8 @@ class ListDataAdapter(
         return MyViewHolder(binding.root)
     }
 
-    fun updatedSearchList(filterList: ArrayList<Content>) {
+    fun updateArrayList(filterList: ArrayList<Content>, searchText: String) {
+        this.searchText=searchText
         contentArrayList = filterList
         notifyDataSetChanged()
     }
@@ -48,7 +55,11 @@ class ListDataAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val content = contentArrayList[position]
 
-        binding.tvTitle.text = content.name
+        if (!searchText.isEmpty()) {
+            context?.let { setSpannableText(it,binding.tvTitle,content.name,searchText) }
+        } else {
+            binding.tvTitle.text = content.name
+        }
         //Glide library to load images into Imageviews
         Glide
             .with(binding.ivListImage)
@@ -60,5 +71,6 @@ class ListDataAdapter(
 
 
     override fun getItemCount() = contentArrayList.size
+
 
 }
