@@ -1,10 +1,14 @@
 package com.example.kotlinassignment.data.model
 
-import com.google.gson.annotations.SerializedName
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.example.contentplay.data.room_database.converters.ListDataConverter
 
 
 data class ListDataModelAPI(
-    val page: Page
+    @TypeConverters(ListDataConverter::class) @ColumnInfo(name = "page")val page: Page
 )
 data class Page(
     val content_items: ContentItems,
@@ -14,10 +18,11 @@ data class Page(
     val total_content_items: String
 )
 data class ContentItems(
-    val content: ArrayList<Content>
+  @TypeConverters(ListDataConverter::class) @ColumnInfo(name = "content")  val content: ArrayList<Content>
 )
+@Entity(tableName = "list_data")
 data class Content(
-    val id:Int,
+    @PrimaryKey (autoGenerate = true) val id:Int,
     val name: String,
     val poster_image: String
 )

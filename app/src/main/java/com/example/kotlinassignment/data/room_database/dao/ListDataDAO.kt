@@ -6,19 +6,17 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.kotlinassignment.data.model.Content
-import com.example.kotlinassignment.data.model.ListDataModel
-import com.example.kotlinassignment.data.model.ListDataModelAPI
 
 @Dao
 interface ListDataDAO {
 
     // Insert list data in database
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addListDataToDB(movies: List<ListDataModel>)
+    fun addListDataToDB(movies: List<Content>)
 
-//    @Query("SELECT * FROM list_table")
-//    fun readAllListFromDB(): LiveData<List<ListDataModel>>
-//
+    @Query("SELECT * FROM list_data")
+    fun readAllListFromDB(): LiveData<List<Content>>
+
 ////    @Query("SELECT * FROM list_table WHERE genres LIKE :query")
 ////    fun readAllListFromDBWithSearch(query: String): LiveData<List<ListDataModel>>
 //

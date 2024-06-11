@@ -12,15 +12,15 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlinassignment.R
 import com.example.kotlinassignment.data.model.Content
-import com.example.kotlinassignment.data.model.ListDataModel
 import com.example.kotlinassignment.data.model.ListDataModelAPI
 import com.example.kotlinassignment.data.repository.ListDataRepository
 import com.example.kotlinassignment.data.room_database.database.ListDataDatabase
@@ -30,12 +30,11 @@ import com.example.kotlinassignment.ui.main.adapter.ListDataAdapter
 import com.example.kotlinassignment.ui.main.view.activities.MainActivity
 import com.example.kotlinassignment.ui.viewmodel.ListDataViewModel
 import com.example.kotlinassignment.utils.AppConstants.TAG
-import com.example.kotlinassignment.utils.CommonFunction.convertDPToPixels
+import com.example.kotlinassignment.utils.CommonFunction.calculateSize
 import com.example.kotlinassignment.utils.CommonFunction.notNullEmpty
 import com.example.kotlinassignment.utils.CommonFunction.parseJsonToModel
 import com.example.kotlinassignment.utils.CommonFunction.readJsonFromAssets
 import com.example.kotlinassignment.utils.RecyclerViewScrollListener
-import kotlin.math.floor
 
 
 class ListDataViewFragment : Fragment() {
@@ -43,7 +42,6 @@ class ListDataViewFragment : Fragment() {
 
     private  var pixel: Int=0
     private lateinit var listConentData: ArrayList<Content>
-    private lateinit var listConentSaveDB: ArrayList<ListDataModel>
     private lateinit var listData: ListDataModelAPI
 
     private lateinit var listDataViewModel: ListDataViewModel
@@ -103,10 +101,21 @@ class ListDataViewFragment : Fragment() {
         //
         hideShowSearchView()
         setSearchFilterList()
+        getDatabaseObserve()
         //
         binding.ivBack.setOnClickListener{ view ->
             (activity as MainActivity?)?.onBackPressed()
         }
+    }
+
+    private fun getDatabaseObserve() {
+        listDataViewModel.isDataAdded.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(context,
+                context?.let { it1 -> ContextCompat.getString(it1,R.string.data_added_successfully) }, Toast.LENGTH_SHORT).show()
+
+
+            Log.e(TAG, "List DB data size== " + listDataViewModel.getListData())
+        })
     }
 
 
@@ -164,30 +173,17 @@ class ListDataViewFragment : Fragment() {
                 listDataAdapter.updateArrayList(listConentData, "")
 
                 //store updated data to DB
-                setDataToDB()
-                listDataViewModel.addListData(
-                    ContextCompat.getString(
-                        requireContext(),
-                        R.string.data_updated_successfully
-                    ), listConentSaveDB
-                )
+                listDataViewModel.addListData(listConentData)
                 Log.e(TAG, "Page No: ${mPage} updated list From JSON == " + listConentData.size)
             }
         } else {
             /*Set List Data for Page 1 */
             listConentData = ArrayList()
-            listConentSaveDB = ArrayList()
             //
             listConentData = listData.page.content_items.content
 
             //store new data to DB
-            setDataToDB()
-            listDataViewModel.addListData(
-                ContextCompat.getString(
-                    requireContext(),
-                    R.string.data_added_successfully
-                ), listConentSaveDB
-            )
+            listDataViewModel.addListData(listConentData)
             Log.e(TAG, "Page No: ${mPage} list From JSON == " + listConentData.size)
             //
             if (notNullEmpty(listConentData)) {
@@ -205,18 +201,6 @@ class ListDataViewFragment : Fragment() {
             scrollListener.enableScrollListener()
         }
 
-    }
-
-    private fun setDataToDB() {
-        for (i in 0 until listConentData.size) {
-
-            val listDataModel = ListDataModel(
-                listConentData.get(i).id,
-                listConentData.get(i).name,
-                listConentData.get(i).poster_image
-            )
-            listConentSaveDB.add(i, listDataModel)
-        }
     }
 
     /*Search from list data*/
@@ -280,19 +264,16 @@ class ListDataViewFragment : Fragment() {
         }
         binding.rvContentListing.addOnScrollListener(scrollListener)
     }
+
+    /*Set Span count Dynamically*/
     private fun setViewTreeObserveData() {
         val viewTreeObserver: ViewTreeObserver = binding.rvContentListing.getViewTreeObserver()
-        viewTreeObserver.addOnGlobalLayoutListener { calculateSize() }
+        viewTreeObserver.addOnGlobalLayoutListener { calculateSize(requireActivity(),binding.rvContentListing) }
     }
 
 
-    private fun calculateSize() {
-        val spanCount =
-            floor(binding.rvContentListing.getWidth() / convertDPToPixels(requireActivity(),sColumnWidth)).toInt()
-        if(spanCount<3)
-            ( binding.rvContentListing.getLayoutManager() as GridLayoutManager).spanCount = 3
-        else
-            ( binding.rvContentListing.getLayoutManager() as GridLayoutManager).spanCount = spanCount
-    }
+
+
+
 
 }

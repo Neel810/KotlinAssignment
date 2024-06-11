@@ -11,6 +11,9 @@ import android.util.DisplayMetrics
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.kotlinassignment.R
 import com.example.kotlinassignment.data.model.ListDataModelAPI
@@ -25,6 +28,7 @@ import com.example.kotlinassignment.utils.AppConstants.POSTER_8
 import com.example.kotlinassignment.utils.AppConstants.POSTER_9
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlin.math.floor
 
 
 object CommonFunction{
@@ -108,6 +112,15 @@ object CommonFunction{
      fun convertDPToPixels(context: Activity,dp: Int): Float {
         val logicalDensity = context.resources.displayMetrics.density
         return dp * logicalDensity
+    }
+
+     fun calculateSize(activity: FragmentActivity, rvContentListing: RecyclerView) {
+        val spanCount =
+            floor(rvContentListing.getWidth() / convertDPToPixels(activity,90)).toInt()
+        if(spanCount<3)
+            ( rvContentListing.getLayoutManager() as GridLayoutManager).spanCount = 3
+        else
+            ( rvContentListing.getLayoutManager() as GridLayoutManager).spanCount = spanCount
     }
 }
 

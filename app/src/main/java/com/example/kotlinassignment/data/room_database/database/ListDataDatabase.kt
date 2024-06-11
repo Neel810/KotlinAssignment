@@ -6,12 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.contentplay.data.room_database.converters.ListDataConverter
-import com.example.kotlinassignment.data.model.ListDataModel
-import com.example.kotlinassignment.data.model.ListDataModelAPI
+import com.example.kotlinassignment.data.model.Content
 import com.example.kotlinassignment.data.room_database.dao.ListDataDAO
 
 
-@Database(entities = [ListDataModel::class], version = 1, exportSchema = false)
+@Database(entities = [Content::class], version = 1, exportSchema = false)
 @TypeConverters(ListDataConverter::class)
 abstract class ListDataDatabase: RoomDatabase(){
 

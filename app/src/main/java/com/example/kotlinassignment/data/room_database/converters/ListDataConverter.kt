@@ -2,7 +2,6 @@ package com.example.contentplay.data.room_database.converters
 
 import androidx.room.TypeConverter
 import com.example.kotlinassignment.data.model.Content
-import com.example.kotlinassignment.data.model.ListDataModel
 import com.example.kotlinassignment.data.model.Page
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -25,7 +24,7 @@ class ListDataConverter {
     }
 
     @TypeConverter
-    fun fromListToString(dataList: Page): String? {
+    fun fromListToStringPage(dataList: Page): String? {
         val gson = Gson()
         val type = object : TypeToken<Page>() {
         }.type
