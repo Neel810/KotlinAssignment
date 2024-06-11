@@ -111,6 +111,7 @@ class ListDataViewFragment() : Fragment() {
             Toast.makeText(context,
                 context?.let { it1 -> ContextCompat.getString(it1,R.string.data_added_successfully) }, Toast.LENGTH_SHORT).show()
         })
+        getDatabaseReadData()
 
 
     }
