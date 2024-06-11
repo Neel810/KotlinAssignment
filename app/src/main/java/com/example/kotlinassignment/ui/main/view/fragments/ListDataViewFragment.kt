@@ -39,9 +39,10 @@ import com.example.kotlinassignment.utils.CommonFunction.notNullEmpty
 import com.example.kotlinassignment.utils.CommonFunction.parseJsonToModel
 import com.example.kotlinassignment.utils.CommonFunction.readJsonFromAssets
 import com.example.kotlinassignment.utils.RecyclerViewScrollListener
+import java.util.Calendar
 
 
-class ListDataViewFragment() : Fragment() {
+class ListDataViewFragment : Fragment(), View.OnClickListener {
 
 
     private lateinit var repository: ListDataRepository
@@ -55,10 +56,7 @@ class ListDataViewFragment() : Fragment() {
     private var mTotalCount = 0
     private var mPage = 1
     private var isPaginate = false
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
+    private lateinit var mTime: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,8 +65,9 @@ class ListDataViewFragment() : Fragment() {
     ): View? {
 
         context?.let { context ->
-             repository = ListDataRepository(ListDataDatabase.getDatabase(context))
-            val factory = ListDataViewModelFactory(context, repository,requireActivity().application)
+            repository = ListDataRepository(ListDataDatabase.getDatabase(context))
+            val factory =
+                ListDataViewModelFactory(context, repository, requireActivity().application)
             listDataViewModel = ViewModelProvider(this, factory)[ListDataViewModel::class.java]
         }
         binding = DataBindingUtil.inflate(
@@ -78,8 +77,9 @@ class ListDataViewFragment() : Fragment() {
         /*Setting List Data on page 1*/
         setListData(PAGE_1)
 
+        /*Set span Count for recylerview*/
         setViewTreeObserveData()
-        return binding.getRoot()
+        return binding.root
 
     }
 
@@ -97,19 +97,24 @@ class ListDataViewFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //
-        hideShowSearchView()
         setSearchFilterList()
-        getDatabaseObserve()
+        getAddedDatabaseObserve()
         //
-        binding.ivBack.setOnClickListener{ view ->
-            (activity as MainActivity?)?.onBackPressed()
-        }
+        binding.ivBack.setOnClickListener(this)
+        binding.ivSearch.setOnClickListener(this)
     }
 
-    private fun getDatabaseObserve() {
+    /*Getting success toast after adding data*/
+    private fun getAddedDatabaseObserve() {
         listDataViewModel.isDataAdded.observe(viewLifecycleOwner, Observer {
             Toast.makeText(context,
-                context?.let { it1 -> ContextCompat.getString(it1,R.string.data_added_successfully) }, Toast.LENGTH_SHORT).show()
+                context?.let { it1 ->
+                    ContextCompat.getString(
+                        it1,
+                        R.string.data_added_successfully
+                    )
+                }, Toast.LENGTH_SHORT
+            ).show()
         })
         getDatabaseReadData()
 
@@ -117,44 +122,18 @@ class ListDataViewFragment() : Fragment() {
     }
 
     /*Read DB list data*/
-    private fun getDatabaseReadData(){
+    private fun getDatabaseReadData() {
         listDataViewModel.contentData.observe(viewLifecycleOwner, Observer {
             Log.e(TAG, "List DB data size== " + it.size)
         })
     }
 
-
-    private fun hideShowSearchView() {
-
-        binding.ivSearch.setOnClickListener { view ->
-            // Do some work here
-            if (!isClicked) {
-
-                isClicked = true
-                setSearchBarHideShowView(GONE, VISIBLE,
-                    context?.let {
-                        ContextCompat.getDrawable(
-                            it.applicationContext,
-                            R.drawable.search_cancel
-                        )
-                    })
-            } else {
-                binding.etSearch.setText("")
-                isClicked = false
-                setSearchBarHideShowView(VISIBLE, GONE, context?.let {
-                    ContextCompat.getDrawable(
-                        it.applicationContext,
-                        R.drawable.search
-                    )
-                })
-
-            }
-
-        }
-    }
-
     /*Show Hide View for SearchView and HEader*/
-    private fun setSearchBarHideShowView(isTvFragmentHeader: Int, isEtSearch: Int, rightIcon: Drawable?) {
+    private fun setSearchBarHideShowView(
+        isTvFragmentHeader: Int,
+        isEtSearch: Int,
+        rightIcon: Drawable?
+    ) {
         //Show Search View
         binding.tvFragmentHeader.visibility = isTvFragmentHeader
         binding.etSearch.visibility = isEtSearch
@@ -220,14 +199,14 @@ class ListDataViewFragment() : Fragment() {
                 //after the change calling the method and passing the search input
                 //if (editable.toString().length > 2) {
 
-                    filter(editable.toString())
+                filter(editable.toString())
                 //}
             }
         })
     }
 
 
-    //filter text list data
+    /*filter text list data*/
     private fun filter(text: String) {
         //new array list that will hold the filtered data
         val filterdNames: ArrayList<Content> = ArrayList()
@@ -249,12 +228,11 @@ class ListDataViewFragment() : Fragment() {
         }
     }
 
+    /*Pagination Scroll Listner*/
     private fun setScrollListnerView() {
-        /*Pagination Scroll Listner*/
         scrollListener = object : RecyclerViewScrollListener() {
             override fun onEndOfScrollReached(recyclerView: RecyclerView?) {
                 if (isPaginate) {
-                    //  addressList.add(null)
                     isPaginate = false
                     mPage++
                     if (mPage == 2) {
@@ -273,12 +251,43 @@ class ListDataViewFragment() : Fragment() {
     /*Set Span count Dynamically*/
     private fun setViewTreeObserveData() {
         val viewTreeObserver: ViewTreeObserver = binding.rvContentListing.getViewTreeObserver()
-        viewTreeObserver.addOnGlobalLayoutListener { calculateSize(requireActivity(),binding.rvContentListing) }
+        viewTreeObserver.addOnGlobalLayoutListener {
+            calculateSize(
+                requireActivity(),
+                binding.rvContentListing
+            )
+        }
     }
 
+    /*Onclick Event*/
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.iv_back -> {
+                (activity as MainActivity?)?.onBackPressed()
+            }
+            R.id.iv_search -> {
+                if (!isClicked) {
 
+                    isClicked = true
+                    setSearchBarHideShowView(GONE, VISIBLE,
+                        context?.let {
+                            ContextCompat.getDrawable(
+                                it.applicationContext,
+                                R.drawable.search_cancel
+                            )
+                        })
+                } else {
+                    binding.etSearch.setText("")
+                    isClicked = false
+                    setSearchBarHideShowView(VISIBLE, GONE, context?.let {
+                        ContextCompat.getDrawable(
+                            it.applicationContext,
+                            R.drawable.search
+                        )
+                    })
 
-
-
-
+                }
+            }
+        }
+    }
 }

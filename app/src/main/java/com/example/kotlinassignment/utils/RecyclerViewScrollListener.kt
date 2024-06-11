@@ -1,35 +1,31 @@
-package com.example.kotlinassignment.utils;
+package com.example.kotlinassignment.utils
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlin.concurrent.Volatile
 
-public abstract class RecyclerViewScrollListener extends RecyclerView.OnScrollListener {
+abstract class RecyclerViewScrollListener : RecyclerView.OnScrollListener() {
+    @Volatile
+    private var mEnabled = true
 
-    private int firstVisibleItem, visibleItemCount, totalItemCount;
-    private volatile boolean mEnabled = true;
+    private var mPreLoadCount = 0
 
-    private int mPreLoadCount = 0;
-
-    @Override
-    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-        super.onScrolled(recyclerView, dx, dy);
+    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        super.onScrolled(recyclerView, dx, dy)
 
         if (mEnabled) {
-            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            val manager = recyclerView.layoutManager
 
-            if (!(manager instanceof LinearLayoutManager)) {
-                throw new IllegalArgumentException("Expected recyclerview to have linear layout manager");
-            }
-            LinearLayoutManager mLayoutManager = (LinearLayoutManager) manager;
+            require(manager is LinearLayoutManager) { "Expected recyclerview to have linear layout manager" }
+            val mLayoutManager = manager
 
-            visibleItemCount = mLayoutManager.getChildCount();
-            totalItemCount = mLayoutManager.getItemCount();
-            firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
-            int lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
+            val visibleItemCount = mLayoutManager.childCount
+            val totalItemCount = mLayoutManager.itemCount
+            val firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition()
+            val lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition()
 
             if (firstVisibleItem + visibleItemCount >= totalItemCount - mPreLoadCount) {
-                onEndOfScrollReached(recyclerView);
+                onEndOfScrollReached(recyclerView)
             }
         }
     }
@@ -39,17 +35,17 @@ public abstract class RecyclerViewScrollListener extends RecyclerView.OnScrollLi
      *
      * @param recyclerView - related recycler view.
      */
-    public abstract void onEndOfScrollReached(RecyclerView recyclerView);
+    abstract fun onEndOfScrollReached(recyclerView: RecyclerView?)
 
-    public void disableScrollListener() {
-        mEnabled = false;
+    fun disableScrollListener() {
+        mEnabled = false
     }
 
-    public void enableScrollListener() {
-        mEnabled = true;
+    fun enableScrollListener() {
+        mEnabled = true
     }
 
-    public void setPreLoadCount(int mPreLoadCount) {
-        this.mPreLoadCount = mPreLoadCount;
+    fun setPreLoadCount(mPreLoadCount: Int) {
+        this.mPreLoadCount = mPreLoadCount
     }
 }

@@ -43,16 +43,6 @@ object CommonFunction{
         val gson = Gson()
         return gson.fromJson(jsonString, object : TypeToken<ListDataModelAPI>() {}.type)
     }
-
-    fun setImageURL(context: Context,image:String,imageView: AppCompatImageView) {
-
-
-        Glide.with(context)
-            .load(image)
-            .error(R.drawable.ic_launcher_background)
-            .placeholder(R.drawable.ic_launcher_background)
-            .into(imageView)
-    }
     fun setListRowImage(context: Context,image:String):Drawable?{
         when (image) {
             POSTER_1 -> return ContextCompat.getDrawable(context.applicationContext, R.drawable.poster_1 )
@@ -106,28 +96,23 @@ object CommonFunction{
 
 
     }
-
-    fun convertPixelsToDp(px: Int, context: Context): Int {
-        return px / (context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
-    }
-
      fun convertDPToPixels(context: Activity,dp: Int): Float {
         val logicalDensity = context.resources.displayMetrics.density
         return dp * logicalDensity
     }
 
      fun calculateSize(activity: FragmentActivity, rvContentListing: RecyclerView) {
-         val displayMetrics: DisplayMetrics = activity.getResources().getDisplayMetrics()
+         val displayMetrics: DisplayMetrics = activity.resources.displayMetrics
          val dpHeight = displayMetrics.heightPixels / displayMetrics.density
          val dpWidth = displayMetrics.widthPixels / displayMetrics.density.toInt()
-         Log.e(TAG,"DIsplay width is ==="+dpWidth)
+         //
         val spanCount =
-            floor(rvContentListing.getWidth() / convertDPToPixels(activity,100)).toInt()
+            floor(rvContentListing.width / convertDPToPixels(activity,100)).toInt()
 
         if(spanCount<3)
-            ( rvContentListing.getLayoutManager() as GridLayoutManager).spanCount = 3
+            ( rvContentListing.layoutManager as GridLayoutManager).spanCount = 3
         else
-            ( rvContentListing.getLayoutManager() as GridLayoutManager).spanCount = spanCount
+            ( rvContentListing.layoutManager as GridLayoutManager).spanCount = spanCount
     }
 }
 
