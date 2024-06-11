@@ -5,6 +5,10 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlin.concurrent.Volatile
 
 abstract class RecyclerViewScrollListener : RecyclerView.OnScrollListener() {
+    private var firstVisibleItem = 0
+    private var visibleItemCount = 0
+    private var totalItemCount = 0
+
     @Volatile
     private var mEnabled = true
 
@@ -19,9 +23,9 @@ abstract class RecyclerViewScrollListener : RecyclerView.OnScrollListener() {
             require(manager is LinearLayoutManager) { "Expected recyclerview to have linear layout manager" }
             val mLayoutManager = manager
 
-            val visibleItemCount = mLayoutManager.childCount
-            val totalItemCount = mLayoutManager.itemCount
-            val firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition()
+            visibleItemCount = mLayoutManager.childCount
+            totalItemCount = mLayoutManager.itemCount
+            firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition()
             val lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition()
 
             if (firstVisibleItem + visibleItemCount >= totalItemCount - mPreLoadCount) {
