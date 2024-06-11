@@ -13,5 +13,9 @@ object AppConstants {
     const val POSTER_7 = "poster7.jpg"
     const val POSTER_8 = "poster8.jpg"
     const val POSTER_9 = "poster9.jpg"
+    const val PAGE_1 = "page_1.json"
+    const val PAGE_2 = "page_2.json"
+    const val PAGE_3 = "page_3.json"
+
 
 }

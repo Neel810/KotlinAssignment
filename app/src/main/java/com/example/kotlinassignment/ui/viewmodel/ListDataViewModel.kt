@@ -1,5 +1,6 @@
 package com.example.kotlinassignment.ui.viewmodel
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -16,14 +17,20 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class ListDataViewModel(val context: Context,private var repository: ListDataRepository): ViewModel() {
+class ListDataViewModel(val context: Context,private var repository: ListDataRepository,var application:Application): ViewModel() {
 
 
     private var listData = MutableLiveData<List<ListDataModelAPI>>()
 
-    private val contentData: LiveData<List<Content>> = repository.readAllMoviesFromDB()
+    internal var contentData: LiveData<List<Content>> = repository.readAllMoviesFromDB()
 
-
+    init{
+        val listDao = ListDataDatabase.getDatabase(application).listDataDao()
+//    initializing repository and passing userDao
+        repository = ListDataRepository(ListDataDatabase.getDatabase(application))
+//    get all data from imageList repository in the variable readAllData
+        contentData = repository.readAllMoviesFromDB()
+    }
     internal val isDataAdded=MutableLiveData<Boolean>()
 
     val moviesDataLiveData:LiveData<List<ListDataModelAPI>>
@@ -55,13 +62,6 @@ class ListDataViewModel(val context: Context,private var repository: ListDataRep
         viewModelScope.launch(Dispatchers.IO){
             repository.addMovieDataToDB(listData)
             isDataAdded.postValue(true)
-        }
-
-    }
-
-    fun getListData(){
-        viewModelScope.launch(Dispatchers.IO){
-            repository.readAllMoviesFromDB()
         }
 
     }

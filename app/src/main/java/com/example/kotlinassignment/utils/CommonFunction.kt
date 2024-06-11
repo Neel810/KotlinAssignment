@@ -8,6 +8,7 @@ import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.util.DisplayMetrics
+import android.util.Log
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -26,6 +27,7 @@ import com.example.kotlinassignment.utils.AppConstants.POSTER_6
 import com.example.kotlinassignment.utils.AppConstants.POSTER_7
 import com.example.kotlinassignment.utils.AppConstants.POSTER_8
 import com.example.kotlinassignment.utils.AppConstants.POSTER_9
+import com.example.kotlinassignment.utils.AppConstants.TAG
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlin.math.floor
@@ -115,8 +117,13 @@ object CommonFunction{
     }
 
      fun calculateSize(activity: FragmentActivity, rvContentListing: RecyclerView) {
+         val displayMetrics: DisplayMetrics = activity.getResources().getDisplayMetrics()
+         val dpHeight = displayMetrics.heightPixels / displayMetrics.density
+         val dpWidth = displayMetrics.widthPixels / displayMetrics.density.toInt()
+         Log.e(TAG,"DIsplay width is ==="+dpWidth)
         val spanCount =
-            floor(rvContentListing.getWidth() / convertDPToPixels(activity,90)).toInt()
+            floor(rvContentListing.getWidth() / convertDPToPixels(activity,100)).toInt()
+
         if(spanCount<3)
             ( rvContentListing.getLayoutManager() as GridLayoutManager).spanCount = 3
         else

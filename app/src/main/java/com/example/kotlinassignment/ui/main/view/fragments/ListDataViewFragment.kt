@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,9 @@ import com.example.kotlinassignment.ui.base.ListDataViewModelFactory
 import com.example.kotlinassignment.ui.main.adapter.ListDataAdapter
 import com.example.kotlinassignment.ui.main.view.activities.MainActivity
 import com.example.kotlinassignment.ui.viewmodel.ListDataViewModel
+import com.example.kotlinassignment.utils.AppConstants.PAGE_1
+import com.example.kotlinassignment.utils.AppConstants.PAGE_2
+import com.example.kotlinassignment.utils.AppConstants.PAGE_3
 import com.example.kotlinassignment.utils.AppConstants.TAG
 import com.example.kotlinassignment.utils.CommonFunction.calculateSize
 import com.example.kotlinassignment.utils.CommonFunction.notNullEmpty
@@ -37,26 +41,20 @@ import com.example.kotlinassignment.utils.CommonFunction.readJsonFromAssets
 import com.example.kotlinassignment.utils.RecyclerViewScrollListener
 
 
-class ListDataViewFragment : Fragment() {
+class ListDataViewFragment() : Fragment() {
 
 
-    private  var pixel: Int=0
+    private lateinit var repository: ListDataRepository
     private lateinit var listConentData: ArrayList<Content>
     private lateinit var listData: ListDataModelAPI
-
     private lateinit var listDataViewModel: ListDataViewModel
     private lateinit var binding: FragmentListMainBinding
-
-    //
     private lateinit var listDataAdapter: ListDataAdapter
     private var isClicked: Boolean = false
-
-    //
     private lateinit var scrollListener: RecyclerViewScrollListener
     private var mTotalCount = 0
     private var mPage = 1
     private var isPaginate = false
-    private val sColumnWidth = 90
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -69,8 +67,8 @@ class ListDataViewFragment : Fragment() {
     ): View? {
 
         context?.let { context ->
-            val repository = ListDataRepository(ListDataDatabase.getDatabase(context))
-            val factory = ListDataViewModelFactory(context, repository)
+             repository = ListDataRepository(ListDataDatabase.getDatabase(context))
+            val factory = ListDataViewModelFactory(context, repository,requireActivity().application)
             listDataViewModel = ViewModelProvider(this, factory)[ListDataViewModel::class.java]
         }
         binding = DataBindingUtil.inflate(
@@ -78,7 +76,7 @@ class ListDataViewFragment : Fragment() {
         )
 
         /*Setting List Data on page 1*/
-        setListData("page_1.json")
+        setListData(PAGE_1)
 
         setViewTreeObserveData()
         return binding.getRoot()
@@ -112,9 +110,15 @@ class ListDataViewFragment : Fragment() {
         listDataViewModel.isDataAdded.observe(viewLifecycleOwner, Observer {
             Toast.makeText(context,
                 context?.let { it1 -> ContextCompat.getString(it1,R.string.data_added_successfully) }, Toast.LENGTH_SHORT).show()
+        })
 
 
-            Log.e(TAG, "List DB data size== " + listDataViewModel.getListData())
+    }
+
+    /*Read DB list data*/
+    private fun getDatabaseReadData(){
+        listDataViewModel.contentData.observe(viewLifecycleOwner, Observer {
+            Log.e(TAG, "List DB data size== " + it.size)
         })
     }
 
@@ -253,9 +257,9 @@ class ListDataViewFragment : Fragment() {
                     isPaginate = false
                     mPage++
                     if (mPage == 2) {
-                        setListData("page_2.json")
+                        setListData(PAGE_2)
                     } else if (mPage == 3) {
-                        setListData("page_3.json")
+                        setListData(PAGE_3)
                     }
 
                 }
